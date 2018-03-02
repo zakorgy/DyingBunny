@@ -45,6 +45,7 @@ public class RabbitScript : MonoBehaviour {
     {
         if (Input.GetButtonDown("Jump") && !m_isDoubleJumping)
         {
+            m_animator.SetBool("run", false);
             m_animator.SetBool("jumping", true);
             m_body.AddForce(new Vector2(0.0f, m_jumpForce), ForceMode2D.Impulse);
             if (m_isJumping)
@@ -72,12 +73,22 @@ public class RabbitScript : MonoBehaviour {
         if (Input.GetButton("Horizontal") && !m_isJumping && !m_isDoubleJumping)
         {
             m_body.velocity = new Vector2(axisValue * m_movSpeed, 0.0f);
+
+            if (Input.GetButton("Fire3")) {
+                m_body.velocity = new Vector2(axisValue * m_movSpeed * 2, 0.0f);
+                m_animator.SetBool("run", true);
+            }
+            else
+            {
+                m_animator.SetBool("run", false);
+            }
         }
 
         if (Input.GetButtonDown("Horizontal") && (m_isJumping || m_isDoubleJumping))
         {
             m_body.AddForce(new Vector2(axisValue * m_movSpeed / 2, 0.0f), ForceMode2D.Impulse);
         }
+
 
         if ((axisValue > 0) && !m_facingRight)
         {
