@@ -14,6 +14,7 @@ public class RabbitScript : MonoBehaviour {
     public float m_jumpForce = 5.0f;
     public float m_maxSpeed = 1.0f;
     public float m_footRadius = 1.0f;
+    public float m_runMultiplier = 2.5f;
 
     bool m_facingRight;
     bool m_isAlive;
@@ -89,7 +90,7 @@ public class RabbitScript : MonoBehaviour {
 
         if (Input.GetButton("Fire3") && !isJumping)
         {
-            m_body.velocity = new Vector2(movSpeed * m_maxSpeed * 2, 0.0f);
+            m_body.velocity = new Vector2(movSpeed * m_maxSpeed * m_runMultiplier, 0.0f);
             m_animator.SetBool("Running", true);
         }
         else
