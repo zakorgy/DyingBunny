@@ -7,17 +7,22 @@ public class RabbitScript : MonoBehaviour {
     Animator m_animator;
     Rigidbody2D m_body;
     CapsuleCollider2D m_colider;
-    public GameObject blood;
-    public GameObject spawnPoint;
-    public LayerMask lm;
-    public Transform foot;
+    public GameObject m_blood;
+    public GameObject m_burn;
+    public GameObject m_spawnPoint;
+    public LayerMask m_lm;
+    public Transform m_foot;
     public float m_jumpForce = 5.0f;
     public float m_maxSpeed = 1.0f;
     public float m_footRadius = 1.0f;
     public float m_runMultiplier = 2.5f;
+    public int m_blodPoolSize = 20;
+    public int m_burnPoolSize = 5;
 
     bool m_facingRight;
     bool m_isAlive;
+    private List<GameObject> m_bloodPool = new List<GameObject>();
+    private List<GameObject> m_burnPool = new List<GameObject>();
 
     // Use this for initialization
     void Start () {
@@ -26,6 +31,20 @@ public class RabbitScript : MonoBehaviour {
         m_colider = this.GetComponent<CapsuleCollider2D>();
         m_facingRight = true;
         m_isAlive = true;
+
+        for (int i = 0; i < m_blodPoolSize; ++i)
+        {
+            GameObject bloodClone = Instantiate(m_blood, transform.position, Quaternion.identity);
+            bloodClone.SetActive(false);
+            m_bloodPool.Add(bloodClone);
+        }
+
+        for (int i = 0; i < m_burnPoolSize; ++i)
+        {
+            GameObject burnClone = Instantiate(m_burn, transform.position, Quaternion.identity);
+            burnClone.SetActive(false);
+            m_burnPool.Add(burnClone);
+        }
     }
 	
 	// Update is called once per frame
@@ -38,6 +57,11 @@ public class RabbitScript : MonoBehaviour {
         {
             m_body.velocity = new Vector2(0.0f, 0.0f);
         }
+    }
+
+    public bool IsAlive()
+    {
+        return m_isAlive;
     }
 
     void UpdatePlayer()
@@ -76,14 +100,13 @@ public class RabbitScript : MonoBehaviour {
             }
         }
 
-        if (Physics2D.OverlapCircle(foot.position, m_footRadius, lm) == null)
+        if (Physics2D.OverlapCircle(m_foot.position, m_footRadius, m_lm) == null)
         {
 
             m_animator.SetBool("Jumping", true);
         }
         else
         {
-            Debug.Log("jump false overlap");
             m_animator.SetBool("Jumping", false);
             m_animator.SetBool("DoubleJumping", false);
         }
@@ -102,30 +125,6 @@ public class RabbitScript : MonoBehaviour {
         {
             HandleSideCollision();
         }
-
-        /*bool isJumping = m_animator.GetBool("Jumping");
-        if (Input.GetButtonDown("Jump"))
-        {
-            if (!isJumping)
-            {
-                m_animator.SetBool("Jumping", true);
-                m_body.AddForce(new Vector2(0.0f, m_jumpForce), ForceMode2D.Impulse);
-                Debug.Log("Jump started");
-            }
-        }
-
-        if (Input.GetButton("Horizontal") && !isJumping)
-        {
-            m_body.velocity = new Vector2(movSpeed * m_movSpeed, 0.0f);
-
-        }
-
-        Debug.Log(Physics.OverlapSphere(feet.transform.localPosition, m_radius, LayerMask.GetMask("StopJump")).Length);
-        if  (Physics.OverlapSphere(feet.transform.localPosition, m_radius, LayerMask.GetMask("StopJump")).Length > 0)
-        {
-            Debug.Log("Jump ended");
-            m_animator.SetBool("Jumping", false);
-        }*/
     }
 
     void Turn()
@@ -160,21 +159,50 @@ public class RabbitScript : MonoBehaviour {
         if (col.gameObject.tag == "Spike")
         {
             m_isAlive = false;
-            PlayDeathAnim();
+            PlayDeathAnimSpike();
+            this.gameObject.SetActive(false);
             ResPawn();
-            m_animator.SetBool("Jumping", false);
+        }
+
+        if (col.gameObject.tag == "Lava")
+        {
+            m_isAlive = false;
+            PlayDeathAnimLava();
+            this.gameObject.SetActive(false);
+            ResPawn();
         }
 
     }
 
-    void PlayDeathAnim()
+    void PlayDeathAnimSpike()
     {
-        Instantiate(blood, transform.position, Quaternion.identity);
+        foreach (var blood in m_bloodPool)
+        {
+            if (!blood.activeSelf)
+            {
+                blood.SetActive(true);
+                blood.transform.position = this.transform.position;
+                break;
+            }
+        }
+    }
+
+    void PlayDeathAnimLava()
+    {
+        foreach (var burn in m_burnPool)
+        {
+            if (!burn.activeSelf)
+            {
+                burn.SetActive(true);
+                burn.transform.position = this.transform.position;
+                break;
+            }
+        }
     }
 
     void ResPawn()
     {
-        transform.position = spawnPoint.transform.position;
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<RespawnControllerScript>().resetGame();
         m_isAlive = true;
         m_body.velocity = new Vector2(0.0f, m_body.velocity.y);
         m_animator.SetBool("Jumping", false);
