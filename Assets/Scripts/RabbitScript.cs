@@ -23,6 +23,7 @@ public class RabbitScript : MonoBehaviour {
     bool m_isAlive;
     private List<GameObject> m_bloodPool = new List<GameObject>();
     private List<GameObject> m_burnPool = new List<GameObject>();
+    private Vector3 m_levelStartPos;
 
     // Use this for initialization
     void Start () {
@@ -31,6 +32,7 @@ public class RabbitScript : MonoBehaviour {
         m_colider = this.GetComponent<CapsuleCollider2D>();
         m_facingRight = true;
         m_isAlive = true;
+        m_levelStartPos = transform.position;
 
         for (int i = 0; i < m_blodPoolSize; ++i)
         {
@@ -170,6 +172,13 @@ public class RabbitScript : MonoBehaviour {
             PlayDeathAnimLava();
             this.gameObject.SetActive(false);
             ResPawn();
+        }
+
+
+        if (col.gameObject.tag == "Exit")
+        {
+            ResPawn();
+            this.transform.position = m_levelStartPos;
         }
 
     }
