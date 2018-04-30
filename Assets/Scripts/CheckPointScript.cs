@@ -18,6 +18,10 @@ public class CheckPointScript : MonoBehaviour {
     {
         if (collision.gameObject.tag == "Player")
         {
+            if (!(collision.gameObject.GetComponent<RespawnScript>().respawnPoint == this.gameObject.transform.position))
+            {
+                GameObject.FindGameObjectWithTag("GameManager").GetComponent<AudioManager>().PlaySound("Checkpoint");
+            }
             collision.gameObject.GetComponent<RespawnScript>().respawnPoint = this.gameObject.transform.position;
         }
     }

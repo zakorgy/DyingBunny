@@ -93,12 +93,14 @@ public class RabbitScript : MonoBehaviour {
                 m_body.velocity = new Vector2(m_body.velocity.x, 0.0f);
                 m_body.AddForce(new Vector2(0.0f, m_jumpForce), ForceMode2D.Impulse);
                 m_animator.SetBool("Jumping", true);
+                PlayJumpSound();
             }
             else if (!isDoubleJumping)
             {
                 m_body.velocity = new Vector2(m_body.velocity.x, 0.0f);
                 m_body.AddForce(new Vector2(0.0f, m_jumpForce), ForceMode2D.Impulse);
                 m_animator.SetBool("DoubleJumping", true);
+                PlayJumpSound();
             }
         }
 
@@ -117,6 +119,7 @@ public class RabbitScript : MonoBehaviour {
         {
             m_body.velocity = new Vector2(movSpeed * m_maxSpeed * m_runMultiplier, 0.0f);
             m_animator.SetBool("Running", true);
+            PlayRunSound();
         }
         else
         {
@@ -162,6 +165,7 @@ public class RabbitScript : MonoBehaviour {
         {
             m_isAlive = false;
             PlayDeathAnimSpike();
+            PlayDeathSoundSplat();
             this.gameObject.SetActive(false);
             ResPawn();
         }
@@ -170,6 +174,7 @@ public class RabbitScript : MonoBehaviour {
         {
             m_isAlive = false;
             PlayDeathAnimLava();
+            PlayDeathSoundBurn();
             this.gameObject.SetActive(false);
             ResPawn();
         }
@@ -207,6 +212,26 @@ public class RabbitScript : MonoBehaviour {
                 break;
             }
         }
+    }
+
+    void PlayDeathSoundSplat()
+    {
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<AudioManager>().PlaySound("Splat" + Random.Range(1, 5));
+    }
+
+    void PlayDeathSoundBurn()
+    {
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<AudioManager>().PlaySound("Burn");
+    }
+
+    void PlayJumpSound()
+    {
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<AudioManager>().PlaySound("Jump");
+    }
+
+    void PlayRunSound()
+    {
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<AudioManager>().PlaySound("Run");
     }
 
     void ResPawn()
