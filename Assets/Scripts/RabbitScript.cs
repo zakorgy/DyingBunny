@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class RabbitScript : MonoBehaviour {
 
@@ -12,12 +14,14 @@ public class RabbitScript : MonoBehaviour {
     public GameObject m_spawnPoint;
     public LayerMask m_lm;
     public Transform m_foot;
+    public Text m_deatCount;
     public float m_jumpForce = 5.0f;
     public float m_maxSpeed = 1.0f;
     public float m_footRadius = 1.0f;
     public float m_runMultiplier = 2.5f;
     public int m_blodPoolSize = 20;
     public int m_burnPoolSize = 5;
+    int m_deaths = 0;
 
     bool m_facingRight;
     bool m_isAlive;
@@ -168,6 +172,7 @@ public class RabbitScript : MonoBehaviour {
             PlayDeathSoundSplat();
             this.gameObject.SetActive(false);
             ResPawn();
+            IncreaseDeathCount();
         }
 
         if (col.gameObject.tag == "Lava")
@@ -177,13 +182,15 @@ public class RabbitScript : MonoBehaviour {
             PlayDeathSoundBurn();
             this.gameObject.SetActive(false);
             ResPawn();
+            IncreaseDeathCount();
         }
 
 
         if (col.gameObject.tag == "Exit")
         {
-            ResPawn();
-            this.transform.position = m_levelStartPos;
+            //ResPawn();
+            //this.transform.position = m_levelStartPos;
+            SceneManager.LoadScene(0);
         }
 
     }
@@ -240,5 +247,12 @@ public class RabbitScript : MonoBehaviour {
         m_isAlive = true;
         m_body.velocity = new Vector2(0.0f, m_body.velocity.y);
         m_animator.SetBool("Jumping", false);
+    }
+
+    void IncreaseDeathCount()
+    {
+        m_deaths++;
+        m_deatCount.text = "X " + m_deaths;
+
     }
 }
