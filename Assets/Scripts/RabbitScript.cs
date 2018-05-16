@@ -173,6 +173,8 @@ public class RabbitScript : MonoBehaviour {
             this.gameObject.SetActive(false);
             ResPawn();
             IncreaseDeathCount();
+            GameObject.FindGameObjectWithTag("GameManager").GetComponent<AchievmentManager>().ManageSpikeAchievment();
+
         }
 
         if (col.gameObject.tag == "Lava")
@@ -188,8 +190,8 @@ public class RabbitScript : MonoBehaviour {
 
         if (col.gameObject.tag == "Exit")
         {
-            //ResPawn();
-            //this.transform.position = m_levelStartPos;
+            GameObject manager = GameObject.FindGameObjectWithTag("GameManager");
+            manager.GetComponent<AchievmentManager>().ManageTimeAchievment(manager.GetComponent<UIManager>().getSeconds());
             SceneManager.LoadScene(0);
         }
 
@@ -253,6 +255,5 @@ public class RabbitScript : MonoBehaviour {
     {
         m_deaths++;
         m_deatCount.text = "X " + m_deaths;
-
     }
 }

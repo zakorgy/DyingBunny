@@ -1,13 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
+    public Text m_spikeDeath;
+    public Text m_bestTime;
 
     void Start()
     {
-        //		PlayerPrefs.DeleteAll ();
+        // Set values for achievement scene
+        if (SceneManager.GetActiveScene().buildIndex ==2)
+        {
+            m_bestTime.text = "Your best time is: " + PlayerPrefs.GetInt("TimeAchievment") + " seconds";
+            m_spikeDeath.text = "You died a bloody death " + PlayerPrefs.GetInt("SpikeAchievment") + " times";
+        }
     }
 
     public void startGame()
@@ -27,7 +35,7 @@ public class MenuManager : MonoBehaviour
 
     public void gotoAcchievements()
     {
-        //SceneManager.LoadScene(2);
+        SceneManager.LoadScene(2);
     }
 
 }

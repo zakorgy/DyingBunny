@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour {
 
     Text m_timeSinceStart;
-    private float secondsCount;
-    private int minuteCount = 0;
+    float secondsCount;
+    int minuteCount = 0;
     // Use this for initialization
     void Start () {
         m_timeSinceStart = GameObject.FindGameObjectWithTag("Time").GetComponent<Text>();
@@ -16,8 +16,12 @@ public class UIManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        UpdateTimerUI();
+        if (m_timeSinceStart)
+        {
+            UpdateTimerUI();
+        }
     }
+
     //call this on update
     public void UpdateTimerUI()
     {
@@ -29,5 +33,10 @@ public class UIManager : MonoBehaviour {
             minuteCount++;
             secondsCount = 0;
         }
+    }
+
+    public int getSeconds()
+    {
+        return 60 * minuteCount + (int)secondsCount;
     }
 }
